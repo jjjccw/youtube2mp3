@@ -10,6 +10,7 @@ python = "^3.11"
 pytube = "^15.0.0"
 prompt-toolkit = "^3.0.39"
 pytest = "^7.4.0"
+moviepy = "^1.0.3"
 
 
 [build-system]
