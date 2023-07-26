@@ -1,0 +1,7 @@
+- per this commit:
+    - figure out how to get the youtube download progress bar working
+    - working progress bar for the conversion from mp4 to mp3 just not the initial actual download
+    - flesh out program execution flow
+    - figure out Oauth stuff so that you can login and download age restricted videos, otherwise unable to be downloaded
+    - figure out freezing the program with cx_freeze / pyinstaller. really just settle on a deliverable in general
+    - create and write unit tests
