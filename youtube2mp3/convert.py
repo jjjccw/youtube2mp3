@@ -15,9 +15,22 @@ class Youtube2Mp3:
         self.url: str = ""
         self.video: YouTube = None
         self.title: str = ""
-        self.save_directory: Path
+        self.output_path: Path = self.set_path()
 
+    def set_path(self):
+        # Find user's home directory and create youtube2mp3 directory
+        # in ~/Music/youtube2mp3/ , downloaded mp3 files are saved here
+        # TODO: maybe downloads belong in ~/Music instead of ~/Downloads?
+        home = pathlib.Path.home()
+        output_path = pathlib.Path(f"{home}/Downloads/youtube2mp3")
+        
+        if not pathlib.Path.exists(output_path):
+            # TODO: maybe print here that we made this directory
+            output_path.mkdir(parents=True, exist_ok=True)
 
+        return output_path
+        
+    
     def get_youtube_video(self):
         """Takes a URL input from the user to construct a YouTube object
 
@@ -31,7 +44,6 @@ class Youtube2Mp3:
                 self.url = yt2mp3_prompt("Enter the URL of the video to convert: ")
                 self.video = YouTube(self.url)
                 self.video.bypass_age_gate()
-                self.video.register_on_progress_callback(on_progress)
                 self.title = self.video.title
                 break
             except Exception as e:
@@ -49,24 +61,14 @@ class Youtube2Mp3:
             
 
     def convert_to_mp3(self):
-        # Find user's home directory and create youtube2mp3 directory
-        # in ~/Music/youtube2mp3/ , downloaded mp3 files are saved here
-        home = pathlib.Path.home()
-        path = pathlib.Path(f"{home}/Downloads/youtube2mp3")
-        path.mkdir(parents=True, exist_ok=True)
-        
-        
         # extract audio stream from the top result youtube video
         # and download to youtube2mp3/ as an mp4 initially
-        print(self.video)
-        audio_stream = self.video.streams\
-            .filter(only_audio=True)\
-            .first()\
-            .download(output_path=path, filename=f"{self.title}.mp4")
+        audio_stream = self.video.streams.filter(audio_only=True).first()
+        audio_stream.download(output_path=self.output_path, filename=f"{self.title}.mp4")
         
-        if pathlib.Path.exists(Path(f"{path}/{self.title}.mp4")):
+        if pathlib.Path.exists(Path(f"{self.output_path}/{self.title}.mp4")):
             print("yt2mp3  - Video successfully downloaded")
 
         # # write final audio file as an mp3
-        # moviepy_audio = AudioFileClip(os.path.join(f"{path}/{self.title}.mp4"))
-        # moviepy_audio.write_audiofile(os.path.join(f"{path}/{self.title}.mp3"))
+        moviepy_audio = AudioFileClip(os.path.join(f"{self.output_path}/{self.title}.mp4"))
+        moviepy_audio.write_audiofile(os.path.join(f"{self.output_path}/{self.title}.mp3"))
