@@ -47,12 +47,15 @@ class Youtube2Mp3:
                 self.title = self.video.title
                 break
             except Exception as e:
-                print(f"yt2mp3 -- [ERROR] occured when retrieving URL: {e}")
+                yt2mp3_print(
+                f"<ansired>[ERROR]</ansired> occured when retrieving URL: {e}"
+                )
                 continue
             
         # confirm this is the right video to convert
         while True:
-            choice = yt2mp3_confirm(f"{self.title} was found. Is this the right video to convert")
+            yt2mp3_print(f"<cyan>{self.title}</cyan> was found")
+            choice = yt2mp3_confirm(f"Is this the right video to convert")
             if choice:
                 self.convert_to_mp3()
                 break
@@ -63,11 +66,12 @@ class Youtube2Mp3:
     def convert_to_mp3(self):
         # extract audio stream from the top result youtube video
         # and download to youtube2mp3/ as an mp4 initially
-        audio_stream = self.video.streams.filter(audio_only=True).first()
+        audio_stream = self.video.streams.filter(only_audio=True).first()
         audio_stream.download(output_path=self.output_path, filename=f"{self.title}.mp4")
         
         if pathlib.Path.exists(Path(f"{self.output_path}/{self.title}.mp4")):
-            print("yt2mp3  - Video successfully downloaded")
+            yt2mp3_print("Video successfully downloaded")
+            yt2mp3_print("Beginning conversion to mp3...")
 
         # # write final audio file as an mp3
         moviepy_audio = AudioFileClip(os.path.join(f"{self.output_path}/{self.title}.mp4"))
