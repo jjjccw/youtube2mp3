@@ -41,12 +41,15 @@ class Youtube2Mp3:
         while True:
             try:
                 self.url = yt2mp3_prompt("Enter the URL of the video to convert: ")
-                self.yt = YouTube(self.url)
+                self.yt = YouTube(
+                    self.url,
+                    on_progress_callback=progress_function,
+                    on_complete_callback=complete_function)
                 self.yt.bypass_age_gate()
                 break
             except Exception as e:
                 yt2mp3_print(
-                f"[ERROR] occured when retrieving URL: {e}"
+                f"[ERROR] when retrieving URL: {e}"
                 )
                 continue
             
@@ -73,7 +76,6 @@ class Youtube2Mp3:
         audio_stream.download(output_path=self.output_path, filename=f"{safe_title}.mp4")
         
         if pathlib.Path.exists(Path(f"{self.output_path}/{safe_title}.mp4")):
-            yt2mp3_print("Video successfully downloaded")
             yt2mp3_print("Beginning conversion to mp3...")
 
         # # write final audio file as an mp3
