@@ -13,8 +13,7 @@ from pytube.exceptions import AgeRestrictedError
 class Youtube2Mp3:
     def __init__(self):
         self.url: str = ""
-        self.video: YouTube = None
-        self.title: str = ""
+        self.yt: YouTube = None
         self.output_path: Path = self.set_path()
 
     def set_path(self):
@@ -42,19 +41,18 @@ class Youtube2Mp3:
         while True:
             try:
                 self.url = yt2mp3_prompt("Enter the URL of the video to convert: ")
-                self.video = YouTube(self.url)
-                self.video.bypass_age_gate()
-                self.title = self.video.title
+                self.yt = YouTube(self.url)
+                self.yt.bypass_age_gate()
                 break
             except Exception as e:
                 yt2mp3_print(
-                f"<ansired>[ERROR]</ansired> occured when retrieving URL: {e}"
+                f"[ERROR] occured when retrieving URL: {e}"
                 )
                 continue
             
         # confirm this is the right video to convert
         while True:
-            yt2mp3_print(f"<cyan>{self.title}</cyan> was found")
+            yt2mp3_print(f"'{self.yt.title}' was found")
             choice = yt2mp3_confirm(f"Is this the right video to convert")
             if choice:
                 self.convert_to_mp3()
@@ -64,15 +62,20 @@ class Youtube2Mp3:
             
 
     def convert_to_mp3(self):
+        # sanitize the youtube title for the download
+        # thanks to SO answer (https://stackoverflow.com/a/7406369/1327508)
+        keepcharacters = (' ','.','_')
+        safe_title = "".join(c for c in self.yt.title if c.isalnum() or c in keepcharacters).rstrip()
+        
         # extract audio stream from the top result youtube video
         # and download to youtube2mp3/ as an mp4 initially
-        audio_stream = self.video.streams.filter(only_audio=True).first()
-        audio_stream.download(output_path=self.output_path, filename=f"{self.title}.mp4")
+        audio_stream = self.yt.streams.filter(only_audio=True).first()
+        audio_stream.download(output_path=self.output_path, filename=f"{safe_title}.mp4")
         
-        if pathlib.Path.exists(Path(f"{self.output_path}/{self.title}.mp4")):
+        if pathlib.Path.exists(Path(f"{self.output_path}/{safe_title}.mp4")):
             yt2mp3_print("Video successfully downloaded")
             yt2mp3_print("Beginning conversion to mp3...")
 
         # # write final audio file as an mp3
-        moviepy_audio = AudioFileClip(os.path.join(f"{self.output_path}/{self.title}.mp4"))
-        moviepy_audio.write_audiofile(os.path.join(f"{self.output_path}/{self.title}.mp3"))
+        moviepy_audio = AudioFileClip(os.path.join(f"{self.output_path}/{safe_title}.mp4"))
+        moviepy_audio.write_audiofile(os.path.join(f"{self.output_path}/{safe_title}.mp3"))

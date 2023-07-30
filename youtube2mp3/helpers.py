@@ -3,7 +3,8 @@ from prompt_toolkit.shortcuts import confirm
 from prompt_toolkit.patch_stdout import patch_stdout
 from prompt_toolkit.shortcuts import print_formatted_text as print
 from tqdm import tqdm
-
+from rich.text import Text
+from rich.style import Style
 
 def yt2mp3_prompt(msg: str):
     try:
@@ -25,7 +26,7 @@ def yt2mp3_confirm(msg: str):
 def yt2mp3_print(msg: str):
     try:
         with patch_stdout():
-            print(HTML(f"yt2mp3  - {msg}"))
+            print(f"yt2mp3  - {msg}")
     except KeyboardInterrupt:
         print("yt2mp3  - Quitting...")
         exit()
