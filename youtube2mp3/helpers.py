@@ -3,13 +3,12 @@ from prompt_toolkit.shortcuts import confirm
 from prompt_toolkit.patch_stdout import patch_stdout
 from tqdm import tqdm
 from pytube import YouTube
-import pytube.request
 from time import sleep
+import sys
 
 def yt2mp3_prompt(msg: str):
     try:
-        with patch_stdout():
-            return(prompt(message=f"yt2mp3  - {msg}"))
+        return(prompt(message=f"yt2mp3  - {msg}"))
     except KeyboardInterrupt:
         print("yt2mp3  - Quitting...")
         exit()
@@ -17,8 +16,7 @@ def yt2mp3_prompt(msg: str):
         
 def yt2mp3_confirm(msg: str):
     try:
-        with patch_stdout():
-            return(confirm(message=f"yt2mp3  - {msg}", suffix="? (Y/n) > "))
+        return(confirm(message=f"yt2mp3  - {msg}", suffix="? (Y/n) > "))
     except KeyboardInterrupt:
         print("yt2mp3  - Quitting...")
         exit()
@@ -26,8 +24,7 @@ def yt2mp3_confirm(msg: str):
         
 def yt2mp3_print(msg: str, end: str = "\n"):
     try:
-        with patch_stdout():
-            print(f"yt2mp3  - {msg}", end=end)
+        print(f"yt2mp3  - {msg}", end=end)
     except KeyboardInterrupt:
         print("yt2mp3  - Quitting...")
         exit()
@@ -42,5 +39,4 @@ def progress_function(stream, chunk, bytes_remaining):
     print(f"yt2mp3  - Downloading: [{status}] {percent}%", end='\r')
 
 def complete_function(stream, file_path):
-    print('Video download completed')
-        
+    print('yt2mp3  - Video download completed ')

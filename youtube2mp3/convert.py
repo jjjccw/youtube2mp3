@@ -8,6 +8,7 @@ from pytube import YouTube
 from pytube import extract
 from pytube.cli import on_progress
 from pytube.exceptions import AgeRestrictedError
+import sys
 
 
 class Youtube2Mp3:
@@ -72,6 +73,7 @@ class Youtube2Mp3:
         
         # extract audio stream from the top result youtube video
         # and download to youtube2mp3/ as an mp4 initially
+        yt2mp3_print("Beginning video download...")
         audio_stream = self.yt.streams.filter(only_audio=True).first()
         audio_stream.download(output_path=self.output_path, filename=f"{safe_title}.mp4")
         
