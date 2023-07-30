@@ -30,13 +30,15 @@ def yt2mp3_print(msg: str, end: str = "\n"):
         exit()
         
 
-def progress_function(stream, chunk, bytes_remaining):
-    current = ((stream.filesize - bytes_remaining)/stream.filesize)
-    percent = ('{0:.1f}').format(current*100)
-    progress = int(50*current)
-    status = '█' * progress + '-' * (50-progress)
-    # cant use our normal yt2mp3 print since we patch stdout
-    print(f"yt2mp3  - Downloading: [{status}] {percent}%", end='\r')
+class ProgressBar(tqdm):
+    def update_to(self, bytes_transferred):
+        self.update(bytes_transferred - self.n)  # will also set self.n = bytes_transferred
+        
+def progress_wrapper(pbar):
+    def progress_callback(stream, chunk, bytes_remaining):
+        bytes_transferred = stream.filesize - bytes_remaining
+        pbar.update_to(bytes_transferred)
+    return progress_callback
 
 def complete_function(stream, file_path):
     print('yt2mp3  - Video download completed ')

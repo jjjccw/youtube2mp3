@@ -2,6 +2,7 @@ import os
 import pathlib
 from pathlib import Path
 
+import pytube
 from helpers import *
 from moviepy.editor import AudioFileClip
 from pytube import YouTube
@@ -10,6 +11,7 @@ from pytube.cli import on_progress
 from pytube.exceptions import AgeRestrictedError
 import sys
 
+pytube.request.default_range_size = 1048576  # 9MB chunk size
 
 class Youtube2Mp3:
     def __init__(self):
@@ -42,10 +44,7 @@ class Youtube2Mp3:
         while True:
             try:
                 self.url = yt2mp3_prompt("Enter the URL of the video to convert: ")
-                self.yt = YouTube(
-                    self.url,
-                    on_progress_callback=progress_function,
-                    on_complete_callback=complete_function)
+                self.yt = YouTube(self.url)
                 self.yt.bypass_age_gate()
                 break
             except Exception as e:
@@ -74,9 +73,15 @@ class Youtube2Mp3:
         # extract audio stream from the top result youtube video
         # and download to youtube2mp3/ as an mp4 initially
         yt2mp3_print("Beginning video download...")
-        audio_stream = self.yt.streams.filter(only_audio=True).first()
-        audio_stream.download(output_path=self.output_path, filename=f"{safe_title}.mp4")
-        
+        with ProgressBar(total=self.yt.streams.get_audio_only().filesize, unit='B', unit_scale=True) as pbar:
+            pbar.set_description("yt2mp3  - Downloading video")
+            self.yt.register_on_progress_callback(progress_wrapper(pbar))
+            # self.yt.register_on_complete_callback(complete_function)
+            self.yt.streams.get_audio_only().download(
+                output_path=self.output_path,
+                filename=f"{safe_title}.mp4"
+            )
+            
         if pathlib.Path.exists(Path(f"{self.output_path}/{safe_title}.mp4")):
             yt2mp3_print("Beginning conversion to mp3...")
 
