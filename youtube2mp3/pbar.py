@@ -1,6 +1,6 @@
 """Simple progress bar wrapper for youtube2mp3"""
 
-import tqdm
+from tqdm import tqdm
 
 class ProgressBar(tqdm):
     def update_to(self, bytes_transferred):

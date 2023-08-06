@@ -7,7 +7,8 @@ from helpers import *
 from moviepy.editor import AudioFileClip
 from pytube import YouTube
 from pytube.exceptions import AgeRestrictedError
-from pbar import progress_wrapper, ProgressBar, complete_function
+from pbar import *
+
 
 pytube.request.default_range_size = 1048576  # 9MB chunk size
 
@@ -22,7 +23,7 @@ class Youtube2Mp3:
         # in ~/Music/youtube2mp3/ , downloaded mp3 files are saved here
         # TODO: maybe downloads belong in ~/Music instead of ~/Downloads?
         home = pathlib.Path.home()
-        output_path = pathlib.Path(f"{home}/Downloads/youtube2mp3")
+        output_path = pathlib.Path(f"{home}/Music/youtube2mp3")
         
         if not pathlib.Path.exists(output_path):
             # TODO: maybe print here that we made this directory

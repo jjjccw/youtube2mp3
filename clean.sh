@@ -1,7 +1,14 @@
 #!/usr/bin/bash
-if [[ -d ~/Downloads/youtube2mp3 ]];then
+if [[ -d ~/Music/youtube2mp3 ]];then
     echo "output directory found, removing now"
-    rm -fr ~/Downloads/youtube2mp3/
+    rm -fr ~/Music/youtube2mp3/
 else
-    echo "--nothing to do for clean.sh"
+    echo "--skipping removal of ~/Music/youtube2mp3/"
+fi
+
+if [[ -d dist ]];then
+    echo "dist directory found, removing now"
+    rm -fr dist
+else
+    echo "--skipping removal of dist/"
 fi

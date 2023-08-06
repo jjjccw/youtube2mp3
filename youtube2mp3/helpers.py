@@ -25,3 +25,4 @@ def yt2mp3_print(msg: str, end: str = "\n"):
     except KeyboardInterrupt:
         print("yt2mp3  - Quitting...")
         exit()
+        
