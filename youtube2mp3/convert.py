@@ -46,10 +46,20 @@ class Youtube2Mp3:
                 self.yt = YouTube(self.url)
                 self.yt.bypass_age_gate()
                 break
+                    
+            except AgeRestrictedError:
+                yt2mp3_print("This video is age restricted, please sign in to continue.")
+                bypass = yt2mp3_confirm("Sign in to YouTube")
+                
+                if bypass:
+                    self.yt.use_oauth=True
+                    self.yt.allow_oauth_cache=True
+                    break
+                
+                return
+            
             except Exception as e:
-                yt2mp3_print(
-                f"[ERROR] when retrieving URL: {e}"
-                )
+                yt2mp3_print(f"[ERROR] when retrieving URL: {e}")
                 continue
             
         # confirm this is the right video to convert
