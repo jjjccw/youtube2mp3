@@ -6,10 +6,8 @@ import pytube
 from helpers import *
 from moviepy.editor import AudioFileClip
 from pytube import YouTube
-from pytube import extract
-from pytube.cli import on_progress
 from pytube.exceptions import AgeRestrictedError
-import sys
+from pbar import progress_wrapper, ProgressBar, complete_function
 
 pytube.request.default_range_size = 1048576  # 9MB chunk size
 
